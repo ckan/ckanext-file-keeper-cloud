@@ -30,18 +30,19 @@ To install ckanext-file-keeper-cloud:
    . /usr/lib/ckan/default/bin/activate
    ```
 1. Clone the source and install it on the virtualenv
+   ```sh
+   git clone https://github.com/ckan/ckanext-file-keeper-cloud.git
+   cd ckanext-file-keeper-cloud
 
-    git clone https://github.com/ckan/ckanext-file-keeper-cloud.git
-    cd ckanext-file-keeper-cloud
+   # to install all adapters
+   pip install -e '.[all]'
 
-    # to install all adapters
-    pip install -e '.[all]'
-
-    # or, to install only specific adapter
-    pip install -e '.[s3]'
-    pip install -e '.[gcs]'
-    pip install -e '.[azure]'
-    pip install -e '.[libcloud]'
+   # or, to install only specific adapter
+   pip install -e '.[s3]'
+   pip install -e '.[gcs]'
+   pip install -e '.[azure]'
+   pip install -e '.[libcloud]'
+   ```
 
 3. Add `file_keeper_cloud` to the `ckan.plugins` setting in your CKAN
    config file (by default the config file is located at
@@ -51,9 +52,14 @@ To install ckanext-file-keeper-cloud:
 
 ## Available adapters
 
+Note, cloud providers can be [emulated using docker
+images](https://datashades.github.io/file-keeper/adapters/emulate/). Even
+though it these images do not replicate ideally corresponding cloud provider,
+generally they are close enough to be used for local development and testing.
+
 ### ckan:s3
 
-AWS S3 adapter.
+AWS S3 adapter. Wraps [file-keeper's implementation](https://datashades.github.io/file-keeper/adapters/s3/)
 
 #### Installation:
 
@@ -83,7 +89,7 @@ environment variables:
 
 ### ckan:azure_blob
 
-Microsoft Azure Blob Storage adapter.
+Microsoft Azure Blob Storage adapter. Wraps [file-keeper's implementation](https://datashades.github.io/file-keeper/adapters/azure_blob/)
 
 #### Installation:
 
@@ -111,7 +117,7 @@ Recommended options:
 
 ### ckan:gcs
 
-Google Cloud Storage adapter.
+Google Cloud Storage adapter. Wraps [file-keeper's implementation](https://datashades.github.io/file-keeper/adapters/gcs/)
 
 #### Installation:
 
@@ -139,7 +145,7 @@ Recommended options:
 
 ### ckan:libcloud
 
-[Apache Libcloud](https://libcloud.apache.org/) adapter.
+[Apache Libcloud](https://libcloud.apache.org/) adapter. Wraps [file-keeper's implementation](https://datashades.github.io/file-keeper/adapters/libcloud/)
 
 #### Installation:
 
