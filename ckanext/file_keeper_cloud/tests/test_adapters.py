@@ -3,9 +3,11 @@ from __future__ import annotations
 import pytest
 from faker import Faker
 
+import ckan.plugins.toolkit as tk
 from ckan import types
 from ckan.lib import files
-from ckan.tests.helpers import call_action
+from ckan.tests.helpers import call_action  # pyright: ignore[reportUnknownVariableType]
+
 from ckanext.file_keeper_cloud import adapters
 
 
@@ -70,8 +72,31 @@ class TestShared:
         """Test that a file can be created using the factory and retrieved from the storage with the correct content."""
         name = faker.file_name()
         content = faker.binary(10)
-        assert not storage.exists(files.FileData.from_string(name))
 
         file = file_factory(storage=storage.settings.name, name=name, upload=content)
         info = files.FileData.from_dict(file)
         assert storage.content(info) == content
+
+    @pytest.mark.usefixtures("clean_db")
+    def test_api_register(self, storage: files.Storage, faker: Faker):
+        """Test that a file can be registered via the API and that duplicate registration raises a validation error."""
+        name = files.Location(faker.file_name())
+        content = faker.binary(10)
+        info = storage.upload(name, files.make_upload(content))
+
+        file = call_action("file_register", location=name, storage=storage.settings.name)
+        assert info.size == file["size"]
+        assert info.hash == file["hash"]
+
+        with pytest.raises(tk.ValidationError):
+            call_action("file_register", location=name, storage=storage.settings.name)
+
+    @pytest.mark.usefixtures("clean_db")
+    def test_api_delete(self, storage: files.Storage, file_factory: types.TestFactory):
+        """Test that a file can be deleted via the API and that it is removed from the storage."""
+        file = file_factory(storage=storage.settings.name)
+        info = files.FileData.from_dict(file)
+        assert storage.exists(info)
+
+        call_action("file_delete", id=file["id"])
+        assert not storage.exists(info)
