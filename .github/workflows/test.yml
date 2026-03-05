@@ -45,36 +45,36 @@ jobs:
       CKAN_FILE_KEEPER_TEST_GCS_ENDPOINT: "http://127.0.0.1:4443"
 
     steps:
-    - uses: actions/checkout@v6
-      - name: Start GCS
-        uses: fsouza/fake-gcs-action@v0.4.2
-        with:
-          version: "1.52.2"
-          scheme: http
+      - uses: actions/checkout@v6
+        - name: Start GCS
+          uses: fsouza/fake-gcs-action@v0.4.2
+          with:
+            version: "1.52.2"
+            scheme: http
 
-      - name: Start MinIO
-        uses: infleet/minio-action@v0.0.2
-        with:
-          port: "9000"
-          version: "latest"
-          username: "minioadmin"
-          password: "minioadmin"
+        - name: Start MinIO
+          uses: infleet/minio-action@v0.0.2
+          with:
+            port: "9000"
+            version: "latest"
+            username: "minioadmin"
+            password: "minioadmin"
 
-    - name: Install requirements
-      # Install any extra requirements your extension has here (dev requirements, other extensions etc)
-      run: |
-        pip install -r requirements.txt
-        pip install -r dev-requirements.txt
-        pip install -e .
-    - name: Setup extension
-      # Extra initialization steps
-      run: |
-        # Replace default path to CKAN core config file with the one on the container
-        sed -i -e 's/use = config:.*/use = config:\/srv\/app\/src\/ckan\/test-core.ini/' test.ini
+      - name: Install requirements
+        # Install any extra requirements your extension has here (dev requirements, other extensions etc)
+        run: |
+          pip install -r requirements.txt
+          pip install -r dev-requirements.txt
+          pip install -e .
+      - name: Setup extension
+        # Extra initialization steps
+        run: |
+          # Replace default path to CKAN core config file with the one on the container
+          sed -i -e 's/use = config:.*/use = config:\/srv\/app\/src\/ckan\/test-core.ini/' test.ini
 
-        ckan -c test.ini db init
-    - name: Run tests
-      run: pytest --ckan-ini=test.ini --cov=ckanext.file_keeper_cloud --disable-warnings ckanext/file_keeper_cloud
+          ckan -c test.ini db init
+      - name: Run tests
+        run: pytest --ckan-ini=test.ini --cov=ckanext.file_keeper_cloud --disable-warnings ckanext/file_keeper_cloud
 
   lint:
     runs-on: ubuntu-latest
