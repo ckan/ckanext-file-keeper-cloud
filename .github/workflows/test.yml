@@ -46,19 +46,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-        - name: Start GCS
-          uses: fsouza/fake-gcs-action@v0.4.2
-          with:
-            version: "1.52.2"
-            scheme: http
+      - name: Start GCS
+        uses: fsouza/fake-gcs-action@v0.4.2
+        with:
+          version: "1.52.2"
+          scheme: http
 
-        - name: Start MinIO
-          uses: infleet/minio-action@v0.0.2
-          with:
-            port: "9000"
-            version: "latest"
-            username: "minioadmin"
-            password: "minioadmin"
+      - name: Start MinIO
+        uses: infleet/minio-action@v0.0.2
+        with:
+          port: "9000"
+          version: "latest"
+          username: "minioadmin"
+          password: "minioadmin"
 
       - name: Install requirements
         # Install any extra requirements your extension has here (dev requirements, other extensions etc)
