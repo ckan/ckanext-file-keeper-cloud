@@ -20,6 +20,10 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       redis:
           image: redis:3
+      azurite:
+        image: mcr.microsoft.com/azure-storage/azurite
+        ports:
+          - 10000:10000
 
     env:
       CKAN_SQLALCHEMY_URL: postgresql://ckan_default:pass@postgres/ckan_test
@@ -28,8 +32,34 @@ jobs:
       CKAN_SOLR_URL: http://solr:8983/solr/ckan
       CKAN_REDIS_URL: redis://redis:6379/1
 
+      CKAN_FILE_KEEPER_TEST_MINIO_ENDPOINT: "http://127.0.0.1:9000"
+      CKAN_FILE_KEEPER_TEST_MINIO_KEY: "minioadmin"
+      CKAN_FILE_KEEPER_TEST_MINIO_SECRET: "minioadmin"
+      CKAN_FILE_KEEPER_TEST_MINIO_BUCKET: "file-keeper"
+
+      CKAN_FILE_KEEPER_TEST_AZURITE_ACCOUNT_URL: "http://127.0.0.1:10000/{account_name}"
+      CKAN_FILE_KEEPER_TEST_AZURITE_ACCOUNT_NAME: "devstoreaccount1"
+      CKAN_FILE_KEEPER_TEST_AZURITE_ACCOUNT_KEY: "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+      CKAN_FILE_KEEPER_TEST_AZURITE_CONTAINER_NAME: "file-keeper"
+
+      CKAN_FILE_KEEPER_TEST_GCS_ENDPOINT: "http://127.0.0.1:4443"
+
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
+      - name: Start GCS
+        uses: fsouza/fake-gcs-action@v0.4.2
+        with:
+          version: "1.52.2"
+          scheme: http
+
+      - name: Start MinIO
+        uses: infleet/minio-action@v0.0.2
+        with:
+          port: "9000"
+          version: "latest"
+          username: "minioadmin"
+          password: "minioadmin"
+
     - name: Install requirements
       # Install any extra requirements your extension has here (dev requirements, other extensions etc)
       run: |

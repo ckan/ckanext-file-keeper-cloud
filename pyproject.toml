@@ -22,6 +22,13 @@ Homepage = "https://github.com/ckan/ckanext-file-keeper-cloud"
 file_keeper_cloud = "ckanext.file_keeper_cloud.plugin:FileKeeperCloudPlugin"
 
 
+[project.optional-dependencies]
+s3 = ["file-keeper[s3]"]
+gcs = ["file-keeper[gcs]"]
+azure = ["file-keeper[azure]"]
+libcloud = ["file-keeper[libcloud]"]
+all = ["file-keeper[cloud,libcloud]"]
+
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
@@ -35,10 +42,78 @@ filterwarnings = [
 addopts = "--ckan-ini test.ini"
 
 [tool.ruff]
-line-length = 127
+target-version = "py39"
+line-length = 120
 
 [tool.ruff.lint]
-select = ["E", "F", "W"]
+select = [
+       "ANN0", # type annotations for function arguments
+       "B",  # likely bugs and design problems
+       "BLE",  # do not catch blind exception
+       "C4",  # better list/set/dict comprehensions
+       "C90",  # check McCabe complexity
+       "DTZ", # enforce timezone in date objects
+       "E",  # pycodestyle error
+       "W",  # pycodestyle warning
+       "F",  # pyflakes
+       "FA", # verify annotations from future
+       "G",  # format strings for logging statements
+       "N",  # naming conventions
+       "I",  # isort
+       "ICN", # import conventions
+       # "D1",  # require doc
+       "D2",  # doc formatting
+       "D4",  # doc convention
+       "PL",  # pylint
+       "PERF", # performance anti-patterns
+       "PT",  # pytest style
+       "PIE",  # misc lints
+       "RET",  # improvements for return statements
+       "RSE",  # improvements for rise statements
+       "S",  # security testing
+       "SIM",  # simplify code
+       "T10",  # debugging statements
+       "T20",  # print statements
+       "TID",  # tidier imports
+       "TRY",  # better exceptions
+       "UP",  # upgrade syntax for newer versions of the language
+]
+
+ignore = [
+       "RET503", # don't enforce return-None
+       "E712", # comparison to bool: violated by SQLAlchemy filters
+       "PLC1901", # simplify comparison to empty string: violated by SQLAlchemy filters
+       "N999",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"ckanext/file_keeper_cloud/tests/*" = ["S", "PL", "ANN"]
+
+[tool.ruff.lint.flake8-import-conventions.aliases]
+"ckan.plugins" = "p"
+"ckan.plugins.toolkit" = "tk"
+sqlalchemy = "sa"
+file_keeper = "fk"
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+section-order = [
+              "future",
+              "standard-library",
+              "first-party",
+              "third-party",
+              "ckan",
+              "ckanext",
+              "self",
+              "local-folder",
+]
+
+[tool.ruff.lint.isort.sections]
+ckan = ["ckan"]
+ckanext = ["ckanext"]
+self = ["ckanext.file_keeper_cloud"]
 
 [tool.pyright]
 extraPaths = [
