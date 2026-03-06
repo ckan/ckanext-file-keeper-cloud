@@ -14,7 +14,9 @@ classifiers = [
 
 keywords = [ "CKAN", "cloud", "filestorage", ]
 dependencies = []
-
+maintainers = [
+    {name = "CKAN Tech Team and contributors", email = "tech-team@ckan.org"},
+ ]
 [project.urls]
 Homepage = "https://github.com/ckan/ckanext-file-keeper-cloud"
 
