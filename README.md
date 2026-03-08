@@ -29,19 +29,16 @@ To install ckanext-file-keeper-cloud:
    ```sh
    . /usr/lib/ckan/default/bin/activate
    ```
-1. Clone the source and install it on the virtualenv
+1. Install the package
    ```sh
-   git clone https://github.com/ckan/ckanext-file-keeper-cloud.git
-   cd ckanext-file-keeper-cloud
-
    # to install all adapters
-   pip install -e '.[all]'
+   pip install 'ckanext-file-keeper-cloud[all]'
 
    # or, to install only specific adapter
-   pip install -e '.[s3]'
-   pip install -e '.[gcs]'
-   pip install -e '.[azure]'
-   pip install -e '.[libcloud]'
+   pip install 'ckanext-file-keeper-cloud[s3]'
+   pip install 'ckanext-file-keeper-cloud[gcs]'
+   pip install 'ckanext-file-keeper-cloud[azure]'
+   pip install 'ckanext-file-keeper-cloud[libcloud]'
    ```
 
 3. Add `file_keeper_cloud` to the `ckan.plugins` setting in your CKAN
@@ -65,8 +62,6 @@ AWS S3 adapter. Wraps [file-keeper's implementation](https://datashades.github.i
 
 ```sh
 pip install 'ckanext-file-keeper-cloud[s3]'
-## or, if using development installation, switch to repository folder and
-pip install -e '.[s3]'
 ```
 
 #### Configuration example:
@@ -95,8 +90,6 @@ Microsoft Azure Blob Storage adapter. Wraps [file-keeper's implementation](https
 
 ```sh
 pip install 'ckanext-file-keeper-cloud[azure]'
-## or, if using development installation, switch to repository folder and
-pip install -e '.[azure]'
 ```
 
 #### Configuration example:
@@ -123,8 +116,6 @@ Google Cloud Storage adapter. Wraps [file-keeper's implementation](https://datas
 
 ```sh
 pip install 'ckanext-file-keeper-cloud[gcs]'
-## or, if using development installation, switch to repository folder and
-pip install -e '.[gcs]'
 ```
 
 #### Configuration example:
@@ -151,8 +142,6 @@ Recommended options:
 
 ```sh
 pip install 'ckanext-file-keeper-cloud[libcloud]'
-## or, if using development installation, switch to repository folder and
-pip install -e '.[libcloud]'
 ```
 
 #### Configuration example:
