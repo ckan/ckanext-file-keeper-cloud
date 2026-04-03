@@ -1,12 +1,24 @@
 from __future__ import annotations
 
 import dataclasses
+from typing import Any
 
 from file_keeper.default.adapters import gcs
 from typing_extensions import override
 
+import ckan.plugins.toolkit as tk
+from ckan import types
 from ckan.config.declaration import Declaration, Key
 from ckan.lib.files import base
+
+
+class Reader(base.Reader, gcs.Reader):
+    storage: GoogleCloudStorage  # pyright: ignore[reportIncompatibleVariableOverride]
+
+    @override
+    def response(self, data: base.FileData, extras: dict[str, Any]) -> types.Response:
+        link = self.temporary_link(data, 60, extras)
+        return tk.redirect_to(link)
 
 
 @dataclasses.dataclass()
@@ -20,23 +32,17 @@ class GoogleCloudStorage(base.Storage, gcs.GoogleCloudStorage):  # pyright: igno
     settings: Settings  # pyright: ignore[reportIncompatibleVariableOverride]
     SettingsFactory = Settings
     UploaderFactory = type("Uploader", (base.Uploader, gcs.Uploader), {})
-    ReaderFactory = type("Reader", (base.Reader, gcs.Reader), {})
+    ReaderFactory = Reader
     ManagerFactory = type("Manager", (base.Manager, gcs.Manager), {})
 
     @override
     @classmethod
     def declare_config_options(cls, declaration: Declaration, key: Key):
         super().declare_config_options(declaration, key)
-        declaration.declare(key.bucket_name).required().set_description(
-            "Name of the storage bucket."
-        )
-        declaration.declare(key.credentials_file, "").set_description(
-            "Path to the JSON with cloud credentials."
-        )
+        declaration.declare(key.bucket_name).required().set_description("Name of the storage bucket.")
+        declaration.declare(key.credentials_file, "").set_description("Path to the JSON with cloud credentials.")
 
-        declaration.declare(key.project_id, "").set_description(
-            "The project which the client acts on behalf of."
-        )
+        declaration.declare(key.project_id, "").set_description("The project which the client acts on behalf of.")
 
         declaration.declare(key.client_options).set_description(
             "Additional options for the client connection."

@@ -1,12 +1,24 @@
 from __future__ import annotations
 
 import dataclasses
+from typing import Any
 
 from file_keeper.default.adapters import azure_blob
 from typing_extensions import override
 
+import ckan.plugins.toolkit as tk
+from ckan import types
 from ckan.config.declaration import Declaration, Key
 from ckan.lib.files import base
+
+
+class Reader(base.Reader, azure_blob.Reader):
+    storage: AzureBlobStorage  # pyright: ignore[reportIncompatibleVariableOverride]
+
+    @override
+    def response(self, data: base.FileData, extras: dict[str, Any]) -> types.Response:
+        link = self.temporary_link(data, 60, extras)
+        return tk.redirect_to(link)
 
 
 @dataclasses.dataclass()
@@ -20,7 +32,7 @@ class AzureBlobStorage(base.Storage, azure_blob.AzureBlobStorage):  # pyright: i
     settings: Settings  # pyright: ignore[reportIncompatibleVariableOverride]
     SettingsFactory = Settings
     UploaderFactory = type("Uploader", (base.Uploader, azure_blob.Uploader), {})
-    ReaderFactory = type("Reader", (base.Reader, azure_blob.Reader), {})
+    ReaderFactory = Reader
     ManagerFactory = type("Manager", (base.Manager, azure_blob.Manager), {})
 
     @override
@@ -28,20 +40,14 @@ class AzureBlobStorage(base.Storage, azure_blob.AzureBlobStorage):  # pyright: i
     def declare_config_options(cls, declaration: Declaration, key: Key):
         super().declare_config_options(declaration, key)
 
-        declaration.declare(key.account_name).required().set_description(
-            "Name of the Azure account."
-        )
-        declaration.declare(key.account_key).required().set_description(
-            "Key for the Azure account."
+        declaration.declare(key.account_name).required().set_description("Name of the Azure account.")
+        declaration.declare(key.account_key).required().set_description("Key for the Azure account.")
+
+        declaration.declare(key.account_url, "https://{account_name}.blob.core.windows.net").set_description(
+            "Custom resource URL."
         )
 
-        declaration.declare(
-            key.account_url, "https://{account_name}.blob.core.windows.net"
-        ).set_description("Custom resource URL.")
-
-        declaration.declare(key.container_name).required().set_description(
-            "Name of the storage container."
-        )
+        declaration.declare(key.container_name).required().set_description("Name of the storage container.")
 
         declaration[key.path].set_description(
             "Path inside the container where uploaded data will be stored.",

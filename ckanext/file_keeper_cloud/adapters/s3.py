@@ -1,12 +1,24 @@
 from __future__ import annotations
 
 import dataclasses
+from typing import Any
 
 from file_keeper.default.adapters import s3
 from typing_extensions import override
 
+import ckan.plugins.toolkit as tk
+from ckan import types
 from ckan.config.declaration import Declaration, Key
 from ckan.lib.files import base
+
+
+class Reader(base.Reader, s3.Reader):
+    storage: S3Storage  # pyright: ignore[reportIncompatibleVariableOverride]
+
+    @override
+    def response(self, data: base.FileData, extras: dict[str, Any]) -> types.Response:
+        link = self.temporary_link(data, 60, extras)
+        return tk.redirect_to(link)
 
 
 @dataclasses.dataclass()
@@ -20,7 +32,7 @@ class S3Storage(base.Storage, s3.S3Storage):  # pyright: ignore[reportIncompatib
     settings: Settings  # pyright: ignore[reportIncompatibleVariableOverride]
     SettingsFactory = Settings
     UploaderFactory = type("Uploader", (base.Uploader, s3.Uploader), {})
-    ReaderFactory = type("Reader", (base.Reader, s3.Reader), {})
+    ReaderFactory = Reader
     ManagerFactory = type("Manager", (base.Manager, s3.Manager), {})
 
     @override
