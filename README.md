@@ -19,10 +19,6 @@ Compatibility with core CKAN versions:
 
 ## Installation
 
-**TODO:** Add any additional install steps to the list below.
-   For example installing any non-Python dependencies or adding any required
-   config settings.
-
 To install ckanext-file-keeper-cloud:
 
 1. Activate your CKAN virtual environment, for example:
@@ -51,7 +47,7 @@ To install ckanext-file-keeper-cloud:
 
 Note, cloud providers can be [emulated using docker
 images](https://datashades.github.io/file-keeper/adapters/emulate/). Even
-though it these images do not replicate ideally corresponding cloud provider,
+though these images do not replicate ideally corresponding cloud provider,
 generally they are close enough to be used for local development and testing.
 
 ### ckan:s3
@@ -250,7 +246,7 @@ produced. Instead, CKAN must produce links that will be shown on the page or in
 API output and client can use these URLs when required. Because these links can
 be stored for a long time before they are accessed, signed URLs will not work
 here. The upper bound on lifetime of the signed URL is 7 days which may be not
-sufficient if content havested and displayed on a different portal.
+sufficient if content harvested and displayed on a different portal.
 
 Because of this, CKAN uses `permanent_link` method of the storage to build an
 image link. This method _makes an assumption_ that bucket is public and builds
