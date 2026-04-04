@@ -186,9 +186,8 @@ uploads:
 ```ini
 ckan.files.storage.resources.type = ckan:s3
 ckan.files.storage.resources.bucket = ckan-resources
-ckan.files.storage.resources.key = AWS_S3_KEY
-ckan.files.storage.resources.secret = AWS_S3_SECRET
 ```
+
 
 CKAN uploads files to bucket and resource's URL points to standard endpoint for
 resource downloads:
@@ -227,8 +226,6 @@ configuration of the storage for the user uploads(avatars):
 ```ini
 ckan.files.storage.users.type = ckan:s3
 ckan.files.storage.users.bucket = ckan-users
-ckan.files.storage.users.key = AWS_S3_KEY
-ckan.files.storage.users.secret = AWS_S3_SECRET
 ```
 
 Upload an image to user profile. If you check `user_show` output after this,
@@ -277,8 +274,6 @@ updated configuration:
 ```ini
 ckan.files.storage.users.type = ckan:s3
 ckan.files.storage.users.bucket = ckan-users
-ckan.files.storage.users.key = AWS_S3_KEY
-ckan.files.storage.users.secret = AWS_S3_SECRET
 ckan.files.storage.users.disabled_capabilities = LINK_PERMANENT
 ```
 
