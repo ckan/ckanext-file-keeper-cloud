@@ -50,6 +50,11 @@ images](https://datashades.github.io/file-keeper/adapters/emulate/). Even
 though these images do not replicate ideally corresponding cloud provider,
 generally they are close enough to be used for local development and testing.
 
+**Never use inline secrets in the config file. Use references to environment
+variables(like in examples below) or
+[ckanext-envvars](https://github.com/ckan/ckanext-envvars).**
+
+
 ### ckan:s3
 
 AWS S3 adapter. Wraps [file-keeper's implementation](https://datashades.github.io/file-keeper/adapters/s3/)
@@ -65,8 +70,8 @@ pip install 'ckanext-file-keeper-cloud[s3]'
 ```ini
 ckan.files.storage.my_cloud.type = ckan:s3
 ckan.files.storage.my_cloud.bucket = my_bucket
-ckan.files.storage.my_cloud.key = ABC123
-ckan.files.storage.my_cloud.secret = 321CBA
+ckan.files.storage.my_cloud.key = %(CKAN_S3_KEY)s
+ckan.files.storage.my_cloud.secret = %(CKAN_S3_SECRET)s
 ```
 
 Only `bucket` option is required as all other parameters can be read from
@@ -93,8 +98,8 @@ pip install 'ckanext-file-keeper-cloud[azure]'
 ```ini
 ckan.files.storage.my_cloud.type = ckan:azure_blob
 ckan.files.storage.my_cloud.container_name = my_container
-ckan.files.storage.my_cloud.account_name = ABC123
-ckan.files.storage.my_cloud.account_key = 321CBA
+ckan.files.storage.my_cloud.account_name = %(CKAN_AZURE_ACCOUNT)s
+ckan.files.storage.my_cloud.account_key = %(CKAN_AZURE_KEY)s
 ```
 
 Recommended options:
@@ -146,8 +151,8 @@ pip install 'ckanext-file-keeper-cloud[libcloud]'
 ckan.files.storage.my_cloud.type = ckan:libcloud
 ckan.files.storage.my_cloud.provider = S3
 ckan.files.storage.my_cloud.container_name = my_bucket
-ckan.files.storage.my_cloud.key = ABC123
-ckan.files.storage.my_cloud.secret = 321CBA
+ckan.files.storage.my_cloud.key = %(CKAN_CLOUD_KEY)s
+ckan.files.storage.my_cloud.secret = %(CKAN_CLOUD_SECRET)s
 ```
 
 Requires following options:
