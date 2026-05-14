@@ -52,3 +52,7 @@ class S3Storage(base.Storage, s3.S3Storage):  # pyright: ignore[reportIncompatib
         declaration[key.path].set_description(
             "Path inside the bucket where uploaded data will be stored.",
         )
+
+        declaration.declare(key.config.signature_version).set_description(
+            "The AWS Signature Version to use when signing requests.",
+        )
