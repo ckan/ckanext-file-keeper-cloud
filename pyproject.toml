@@ -1,6 +1,6 @@
 [project]
 name = "ckanext-file-keeper-cloud"
-version = "0.0.2"
+version = "0.0.3"
 description = ""
 readme = "README.md"
 license = {text = "AGPL"}
