@@ -9,7 +9,7 @@ from typing_extensions import override
 import ckan.plugins.toolkit as tk
 from ckan import types
 from ckan.config.declaration import Declaration, Key
-from ckan.lib.files import base
+from ckan.lib.files import base, exc
 
 
 class Reader(base.Reader, s3.Reader):
@@ -19,6 +19,37 @@ class Reader(base.Reader, s3.Reader):
     def response(self, data: base.FileData, extras: dict[str, Any]) -> types.Response:
         link = self.temporary_link(data, 60, extras)
         return tk.redirect_to(link)
+
+
+class Manager(base.Manager, s3.Manager):
+    storage: S3Storage  # pyright: ignore[reportIncompatibleVariableOverride]
+
+    @override
+    def analyze(self, location: base.Location, extras: dict[str, Any]) -> base.FileData:
+        filepath = self.storage.full_path(location)
+        client = self.storage.settings.client
+
+        try:
+            obj = client.head_object(
+                Bucket=self.storage.settings.bucket,
+                Key=filepath,
+                ChecksumMode="ENABLED",
+            )
+        except client.exceptions.ClientError as err:
+            raise exc.MissingFileError(self.storage, filepath) from err
+
+        algorithm = self.storage.settings.hashing_algorithm
+        if not (checksum := obj.get(f"Checksum{algorithm.upper()}")):
+            checksum = obj["ETag"].strip('"')
+            algorithm = "md5"
+
+        return base.FileData(
+            location,
+            size=obj["ContentLength"],
+            content_type=obj["ContentType"],
+            hash=checksum,
+            algorithm=algorithm,
+        )
 
 
 @dataclasses.dataclass()
@@ -33,7 +64,7 @@ class S3Storage(base.Storage, s3.S3Storage):  # pyright: ignore[reportIncompatib
     SettingsFactory = Settings
     UploaderFactory = type("Uploader", (base.Uploader, s3.Uploader), {})
     ReaderFactory = Reader
-    ManagerFactory = type("Manager", (base.Manager, s3.Manager), {})
+    ManagerFactory = Manager
 
     @override
     @classmethod
@@ -56,3 +87,7 @@ class S3Storage(base.Storage, s3.S3Storage):  # pyright: ignore[reportIncompatib
         declaration.declare(key.config.signature_version).set_description(
             "The AWS Signature Version to use when signing requests.",
         )
+
+        declaration.declare(key.multipart_threshold, "8MB").set_description(
+            "Threshold for multipart uploads. Files larger than this size will be uploaded in multiple parts.",
+        ).append_validators("parse_filesize")
