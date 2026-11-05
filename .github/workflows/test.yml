@@ -56,6 +56,9 @@ jobs:
 
       - name: Set up Docker CLI
         uses: docker/setup-docker-action@v4 # Installs docker in the runner path
+        with:
+          # Forces the action to run without trying to invoke 'sudo'
+          rootless: true
 
       - name: Start Silo Server
         run: |
