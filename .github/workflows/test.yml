@@ -22,11 +22,11 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       redis:
           image: redis:3
-      # azurite:
-      #   image: mcr.microsoft.com/azure-storage/azurite
-      #   ports:
-      #     - 10000:10000
-      #   command: azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --skipApiVersionCheck
+      azurite:
+        image: mcr.microsoft.com/azure-storage/azurite
+        ports:
+          - 10000:10000
+        command: azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --skipApiVersionCheck
 
       silo:
         image: pgsty/silo:latest
@@ -51,7 +51,7 @@ jobs:
       CKAN_FILE_KEEPER_TEST_MINIO_SECRET: "minioadmin"
       CKAN_FILE_KEEPER_TEST_MINIO_BUCKET: "file-keeper"
 
-      CKAN_FILE_KEEPER_TEST_AZURITE_ACCOUNT_URL: "http://127.0.0.1:10000/{account_name}"
+      CKAN_FILE_KEEPER_TEST_AZURITE_ACCOUNT_URL: "http://azurite:10000/{account_name}"
       CKAN_FILE_KEEPER_TEST_AZURITE_ACCOUNT_NAME: "devstoreaccount1"
       CKAN_FILE_KEEPER_TEST_AZURITE_ACCOUNT_KEY: "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
       CKAN_FILE_KEEPER_TEST_AZURITE_CONTAINER_NAME: "file-keeper"
@@ -60,9 +60,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - name: Install Azurite
-        id: azuright
-        uses: potatoqualitee/azuright@v1.1
       - name: Start GCS
         uses: fsouza/fake-gcs-action@v0.4.2
         with:
