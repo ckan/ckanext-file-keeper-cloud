@@ -27,6 +27,17 @@ jobs:
         ports:
           - 10000:10000
 
+      silo:
+        image: pgsty/silo:latest
+        ports:
+          - 9000:9000
+          - 9001:9001
+        env:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+        options: --entrypoint "/silo"
+        args: server /data --console-address ":9001"
+
     env:
       CKAN_SQLALCHEMY_URL: postgresql://ckan_default:pass@postgres/ckan_test
       CKAN_DATASTORE_WRITE_URL: postgresql://datastore_write:pass@postgres/datastore_test
@@ -53,29 +64,6 @@ jobs:
         with:
           version: "1.52.2"
           scheme: http
-
-      - name: Install sudo
-        run: apt-get update && apt-get install -y sudo
-
-      - name: Set up Docker CLI
-        uses: docker/setup-docker-action@v4 # Installs docker in the runner path
-        with:
-          daemon-config: |
-            {
-              "iptables": false
-            }
-
-
-      - name: Start Silo Server
-        run: |
-          docker run -d \
-            --name silo \
-            --net=host \
-            -p 9000:9000 \
-            -p 9001:9001 \
-            -e MINIO_ROOT_USER=minioadmin \
-            -e MINIO_ROOT_PASSWORD=minioadmin \
-            pgsty/silo:latest server /data --console-address ":9001"
 
       - name: Install requirements
         # Install any extra requirements your extension has here (dev requirements, other extensions etc)
