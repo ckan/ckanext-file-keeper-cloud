@@ -8,7 +8,7 @@ jobs:
       # the one of the container the tests run on.
       # You can switch this base image with a custom image tailored to your project
       image: ckan/ckan-dev:2.12
-      options: --user root  --network host
+      options: --user root --add-host=host.docker.internal:host-gateway
 
     services:
       solr:
@@ -56,14 +56,14 @@ jobs:
       CKAN_FILE_KEEPER_TEST_AZURITE_ACCOUNT_KEY: "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
       CKAN_FILE_KEEPER_TEST_AZURITE_CONTAINER_NAME: "file-keeper"
 
-      CKAN_FILE_KEEPER_TEST_GCS_ENDPOINT: "http://127.0.0.1:4443"
+      CKAN_FILE_KEEPER_TEST_GCS_ENDPOINT: "http://docker.internal:4443"
 
     steps:
       - uses: actions/checkout@v6
       - name: Start GCS
         uses: fsouza/fake-gcs-action@v0.4.2
         with:
-          version: "1.52.2"
+          version: "1.56.1"
           scheme: http
 
       - name: Install requirements
