@@ -35,8 +35,8 @@ jobs:
         env:
           MINIO_ROOT_USER: minioadmin
           MINIO_ROOT_PASSWORD: minioadmin
-        options: --entrypoint "/silo"
-        args: server /data --console-address ":9001"
+        entrypoint: /silo
+        command: server /data --console-address ":9001"
 
     env:
       CKAN_SQLALCHEMY_URL: postgresql://ckan_default:pass@postgres/ckan_test
