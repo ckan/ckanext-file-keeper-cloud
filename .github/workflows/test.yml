@@ -59,6 +59,12 @@ jobs:
 
       - name: Set up Docker CLI
         uses: docker/setup-docker-action@v4 # Installs docker in the runner path
+        with:
+          daemon-config: |
+            {
+              "iptables": false
+            }
+
 
       - name: Start Silo Server
         run: |
