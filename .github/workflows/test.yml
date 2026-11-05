@@ -54,11 +54,11 @@ jobs:
           version: "1.52.2"
           scheme: http
 
+      - name: Install sudo
+        run: apt-get update && apt-get install -y sudo
+
       - name: Set up Docker CLI
         uses: docker/setup-docker-action@v4 # Installs docker in the runner path
-        with:
-          # Forces the action to run without trying to invoke 'sudo'
-          rootless: true
 
       - name: Start Silo Server
         run: |
