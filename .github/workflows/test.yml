@@ -56,7 +56,7 @@ jobs:
       CKAN_FILE_KEEPER_TEST_AZURITE_ACCOUNT_KEY: "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
       CKAN_FILE_KEEPER_TEST_AZURITE_CONTAINER_NAME: "file-keeper"
 
-      CKAN_FILE_KEEPER_TEST_GCS_ENDPOINT: "http://docker.internal:4443"
+      CKAN_FILE_KEEPER_TEST_GCS_ENDPOINT: "http://host.docker.internal:4443"
 
     steps:
       - uses: actions/checkout@v6
